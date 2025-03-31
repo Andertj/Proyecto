@@ -1,0 +1,73 @@
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Table, TableHead, TableRow, TableHeader, TableBody, TableCell } from "@/components/ui/table";
+import { FileUpload } from "@/components/ui/file-upload";
+
+export default function Dashboard() {
+  const [inventory, setInventory] = useState([]);
+
+  const handleFileUpload = (file) => {
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const text = event.target.result;
+      const rows = text.split("\n").slice(1);
+      const parsedData = rows.map(row => row.split(",")).map(([activo, nombre, marca, modelo, serial, registro, riesgo, servicio, estado, observaciones]) => ({
+        activo, nombre, marca, modelo, serial, registro, riesgo, servicio, estado, observaciones
+      }));
+      setInventory(parsedData);
+    };
+    reader.readAsText(file);
+  };
+
+  return (
+    <div className="p-6 space-y-6">
+      <h1 className="text-2xl font-bold">Gestión de Mantenimiento</h1>
+      
+      <Card>
+        <CardContent>
+          <h2 className="text-lg font-semibold">Cargar Inventario</h2>
+          <FileUpload onUpload={handleFileUpload} />
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardContent>
+          <h2 className="text-lg font-semibold">Inventario de Equipos</h2>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableHeader>Activo</TableHeader>
+                <TableHeader>Nombre</TableHeader>
+                <TableHeader>Marca</TableHeader>
+                <TableHeader>Modelo</TableHeader>
+                <TableHeader>Serial</TableHeader>
+                <TableHeader>Registro Sanitario</TableHeader>
+                <TableHeader>Riesgo</TableHeader>
+                <TableHeader>Servicio</TableHeader>
+                <TableHeader>Estado</TableHeader>
+                <TableHeader>Observaciones</TableHeader>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {inventory.map((item, index) => (
+                <TableRow key={index}>
+                  <TableCell>{item.activo}</TableCell>
+                  <TableCell>{item.nombre}</TableCell>
+                  <TableCell>{item.marca}</TableCell>
+                  <TableCell>{item.modelo}</TableCell>
+                  <TableCell>{item.serial}</TableCell>
+                  <TableCell>{item.registro}</TableCell>
+                  <TableCell>{item.riesgo}</TableCell>
+                  <TableCell>{item.servicio}</TableCell>
+                  <TableCell>{item.estado}</TableCell>
+                  <TableCell>{item.observaciones}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
